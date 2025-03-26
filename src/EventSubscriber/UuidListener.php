@@ -8,6 +8,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Uid\Uuid;
 use Tourze\DoctrineEntityCheckerBundle\Checker\EntityCheckerInterface;
@@ -18,7 +19,7 @@ use Tourze\DoctrineUuidBundle\Attribute\UuidV4Column;
 class UuidListener implements EntityCheckerInterface
 {
     public function __construct(
-        private readonly PropertyAccessor $propertyAccessor,
+        #[Autowire(service: 'doctrine-uuid.property-accessor')] private readonly PropertyAccessor $propertyAccessor,
         private readonly ?LoggerInterface $logger = null,
     ) {
     }
