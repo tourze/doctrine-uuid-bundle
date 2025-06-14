@@ -2,23 +2,27 @@
 
 namespace Tourze\DoctrineUuidBundle\Tests\Integration;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Uid\Uuid;
+use Tourze\DoctrineEntityCheckerBundle\DoctrineEntityCheckerBundle;
+use Tourze\DoctrineUuidBundle\DoctrineUuidBundle;
 use Tourze\DoctrineUuidBundle\EventSubscriber\UuidListener;
 use Tourze\DoctrineUuidBundle\Tests\Integration\Entity\TestEntity;
+use Tourze\IntegrationTestKernel\IntegrationTestKernel;
 
 class DoctrineUuidIntegrationTest extends KernelTestCase
 {
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->createSchema();
+        // 数据库模式由通用内核自动创建
     }
 
     protected function tearDown(): void
     {
-        $this->dropSchema();
         self::ensureKernelShutdown();
         parent::tearDown();
     }
@@ -28,21 +32,27 @@ class DoctrineUuidIntegrationTest extends KernelTestCase
         return IntegrationTestKernel::class;
     }
 
-    private function createSchema(): void
+    protected static function createKernel(array $options = []): IntegrationTestKernel
     {
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        $metadata = $em->getMetadataFactory()->getAllMetadata();
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-        $schemaTool->createSchema($metadata);
+        $appendBundles = [
+            FrameworkBundle::class => ['all' => true],
+            DoctrineBundle::class => ['all' => true],
+            DoctrineEntityCheckerBundle::class => ['all' => true],
+            DoctrineUuidBundle::class => ['all' => true],
+        ];
+        
+        $entityMappings = [
+            'Tourze\DoctrineUuidBundle\Tests\Integration\Entity' => __DIR__ . '/Entity',
+        ];
+
+        return new IntegrationTestKernel(
+            $options['environment'] ?? 'test',
+            $options['debug'] ?? true,
+            $appendBundles,
+            $entityMappings
+        );
     }
 
-    private function dropSchema(): void
-    {
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        $metadata = $em->getMetadataFactory()->getAllMetadata();
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-        $schemaTool->dropSchema($metadata);
-    }
 
     public function testServiceWiring(): void
     {

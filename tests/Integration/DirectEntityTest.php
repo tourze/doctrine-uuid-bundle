@@ -2,45 +2,55 @@
 
 namespace Tourze\DoctrineUuidBundle\Tests\Integration;
 
-use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Tourze\DoctrineEntityCheckerBundle\DoctrineEntityCheckerBundle;
+use Tourze\DoctrineUuidBundle\DoctrineUuidBundle;
 use Tourze\DoctrineUuidBundle\EventSubscriber\UuidListener;
 use Tourze\DoctrineUuidBundle\Tests\Integration\Entity\TestEntity;
+use Tourze\IntegrationTestKernel\IntegrationTestKernel;
 
 class DirectEntityTest extends KernelTestCase
 {
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->createSchema();
+        // 数据库模式由通用内核自动创建
     }
 
     protected function tearDown(): void
     {
-        $this->dropSchema();
         self::ensureKernelShutdown();
         parent::tearDown();
-    }
-
-    private function createSchema(): void
-    {
-        $em = self::getContainer()->get('doctrine.orm.entity_manager');
-        $schemaTool = new SchemaTool($em);
-        $schemaTool->createSchema([$em->getClassMetadata(TestEntity::class)]);
-    }
-
-    private function dropSchema(): void
-    {
-        $em = self::getContainer()->get('doctrine.orm.entity_manager');
-        $schemaTool = new SchemaTool($em);
-        $schemaTool->dropSchema([$em->getClassMetadata(TestEntity::class)]);
     }
 
     protected static function getKernelClass(): string
     {
         return IntegrationTestKernel::class;
+    }
+
+    protected static function createKernel(array $options = []): IntegrationTestKernel
+    {
+        $appendBundles = [
+            FrameworkBundle::class => ['all' => true],
+            DoctrineBundle::class => ['all' => true],
+            DoctrineEntityCheckerBundle::class => ['all' => true],
+            DoctrineUuidBundle::class => ['all' => true],
+        ];
+        
+        $entityMappings = [
+            'Tourze\DoctrineUuidBundle\Tests\Integration\Entity' => __DIR__ . '/Entity',
+        ];
+
+        return new IntegrationTestKernel(
+            $options['environment'] ?? 'test',
+            $options['debug'] ?? true,
+            $appendBundles,
+            $entityMappings
+        );
     }
 
     public function testDirectUuidGeneration(): void
