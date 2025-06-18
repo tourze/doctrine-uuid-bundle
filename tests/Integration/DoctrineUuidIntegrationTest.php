@@ -53,7 +53,6 @@ class DoctrineUuidIntegrationTest extends KernelTestCase
         );
     }
 
-
     public function testServiceWiring(): void
     {
         $container = self::getContainer();
