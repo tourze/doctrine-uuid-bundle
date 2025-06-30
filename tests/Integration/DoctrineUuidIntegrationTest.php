@@ -79,6 +79,7 @@ class DoctrineUuidIntegrationTest extends KernelTestCase
         $em->clear();
 
         // 从数据库加载并验证
+        /** @phpstan-ignore-next-line */
         $loadedEntity = $em->getRepository(TestEntity::class)->findOneBy(['name' => 'Test Entity']);
         $this->assertInstanceOf(TestEntity::class, $loadedEntity);
         $this->assertEquals($id, $loadedEntity->getId());
@@ -107,6 +108,7 @@ class DoctrineUuidIntegrationTest extends KernelTestCase
         $em->clear();
 
         // 从数据库加载并验证
+        /** @phpstan-ignore-next-line */
         $loadedEntity = $em->getRepository(TestEntity::class)->findOneBy(['name' => 'Preset UUID Entity']);
         $this->assertInstanceOf(TestEntity::class, $loadedEntity);
         $this->assertEquals($presetUuid, $loadedEntity->getUuid());

@@ -35,6 +35,7 @@ class PropertySetterTest extends TestCase
         $this->assertNotEmpty($property->getAttributes(UuidV1Column::class));
 
         $propertyAccessor->setValue($entity, 'id', 'test-uuid-value');
+        $this->assertTrue(method_exists($entity, 'getId'));
         $this->assertEquals('test-uuid-value', $entity->getId());
     }
 
@@ -64,6 +65,7 @@ class PropertySetterTest extends TestCase
         $this->assertNotEmpty($property->getAttributes(UuidV4Column::class));
 
         $propertyAccessor->setValue($entity, 'uuid', 'test-uuid-value');
+        $this->assertTrue(method_exists($entity, 'getUuid'));
         $this->assertEquals('test-uuid-value', $entity->getUuid());
     }
 }

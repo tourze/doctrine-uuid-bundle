@@ -87,6 +87,7 @@ class DirectEntityTest extends KernelTestCase
         $em->clear();
 
         // 从数据库检索实体并验证
+        /** @phpstan-ignore-next-line */
         $loadedEntity = $em->getRepository(TestEntity::class)->findOneBy(['name' => 'Direct Test']);
         $this->assertInstanceOf(TestEntity::class, $loadedEntity);
         $this->assertEquals($entity->getId(), $loadedEntity->getId());
@@ -102,12 +103,14 @@ class DirectEntityTest extends KernelTestCase
         $this->assertTrue($propertyAccessor->isWritable($entity, 'id'));
         $testUuid = 'test-uuid-value';
         $propertyAccessor->setValue($entity, 'id', $testUuid);
+        $this->assertInstanceOf(TestEntity::class, $entity);
         $this->assertEquals($testUuid, $entity->getId());
 
         // 测试 uuid 属性是否可写
         $this->assertTrue($propertyAccessor->isWritable($entity, 'uuid'));
         $testUuidV4 = 'test-uuid-v4-value';
         $propertyAccessor->setValue($entity, 'uuid', $testUuidV4);
+        $this->assertInstanceOf(TestEntity::class, $entity);
         $this->assertEquals($testUuidV4, $entity->getUuid());
     }
 }
