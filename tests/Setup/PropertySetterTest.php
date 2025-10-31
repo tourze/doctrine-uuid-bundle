@@ -1,13 +1,20 @@
 <?php
 
-namespace Tourze\DoctrineUuidBundle\Tests\Unit\Setup;
+declare(strict_types=1);
 
+namespace Tourze\DoctrineUuidBundle\Tests\Setup;
+
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Tourze\DoctrineUuidBundle\Attribute\UuidV1Column;
 use Tourze\DoctrineUuidBundle\Attribute\UuidV4Column;
 
-class PropertySetterTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(UuidV1Column::class)]
+final class PropertySetterTest extends TestCase
 {
     public function testPropertySetterWithUuidV1(): void
     {
@@ -20,10 +27,9 @@ class PropertySetterTest extends TestCase
                 return $this->id;
             }
 
-            public function setId(string $id): self
+            public function setId(string $id): void
             {
                 $this->id = $id;
-                return $this;
             }
         };
 
@@ -35,7 +41,6 @@ class PropertySetterTest extends TestCase
         $this->assertNotEmpty($property->getAttributes(UuidV1Column::class));
 
         $propertyAccessor->setValue($entity, 'id', 'test-uuid-value');
-        $this->assertTrue(method_exists($entity, 'getId'));
         $this->assertEquals('test-uuid-value', $entity->getId());
     }
 
@@ -50,10 +55,9 @@ class PropertySetterTest extends TestCase
                 return $this->uuid;
             }
 
-            public function setUuid(?string $uuid): self
+            public function setUuid(?string $uuid): void
             {
                 $this->uuid = $uuid;
-                return $this;
             }
         };
 
@@ -65,7 +69,6 @@ class PropertySetterTest extends TestCase
         $this->assertNotEmpty($property->getAttributes(UuidV4Column::class));
 
         $propertyAccessor->setValue($entity, 'uuid', 'test-uuid-value');
-        $this->assertTrue(method_exists($entity, 'getUuid'));
         $this->assertEquals('test-uuid-value', $entity->getUuid());
     }
 }

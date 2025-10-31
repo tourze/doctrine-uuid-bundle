@@ -2,12 +2,34 @@
 
 [English](README.md) | [中文](README.zh-CN.md)
 
-[![最新版本](https://img.shields.io/packagist/v/tourze/doctrine-uuid-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/doctrine-uuid-bundle)
-[![构建状态](https://img.shields.io/travis/tourze/doctrine-uuid-bundle/master.svg?style=flat-square)](https://travis-ci.org/tourze/doctrine-uuid-bundle)
-[![质量评分](https://img.shields.io/scrutinizer/g/tourze/doctrine-uuid-bundle.svg?style=flat-square)](https://scrutinizer-ci.com/g/tourze/doctrine-uuid-bundle)
-[![总下载量](https://img.shields.io/packagist/dt/tourze/doctrine-uuid-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![最新版本](https://img.shields.io/packagist/v/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![PHP版本](https://img.shields.io/packagist/php-v/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![许可证](https://img.shields.io/packagist/l/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![构建状态](https://img.shields.io/travis/tourze/doctrine-uuid-bundle/master.svg?style=flat-square)]
+(https://travis-ci.org/tourze/doctrine-uuid-bundle)
+[![质量评分](https://img.shields.io/scrutinizer/g/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://scrutinizer-ci.com/g/tourze/doctrine-uuid-bundle)
+[![总下载量](https://img.shields.io/packagist/dt/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![代码覆盖率](https://img.shields.io/scrutinizer/coverage/g/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://scrutinizer-ci.com/g/tourze/doctrine-uuid-bundle)
 
 一个基于 PHP 8 Attribute 的 Symfony Bundle，实现 Doctrine 实体属性的自动 UUID（v1/v4）赋值。
+
+## 安装方法
+
+```bash
+composer require tourze/doctrine-uuid-bundle
+```
+
+## 环境要求
+
+- PHP 8.1 及以上
+- Symfony 6.4 及以上
+- Doctrine Bundle 2.13 及以上
 
 ## 功能特性
 
@@ -20,18 +42,6 @@
 - 支持可空 UUID 字段
 - 自动适配数据库 schema 更新
 - 兼容 Symfony 6.4+ 和 Doctrine 2.13+
-
-## 环境要求
-
-- PHP 8.1 及以上
-- Symfony 6.4 及以上
-- Doctrine Bundle 2.13 及以上
-
-## 安装方法
-
-```bash
-composer require tourze/doctrine-uuid-bundle
-```
 
 ## 快速开始
 
@@ -58,14 +68,31 @@ class YourEntity
 
 实体在持久化时会自动生成 UUID。
 
+## 配置说明
+
+本 Bundle 采用零配置设计。如需自定义行为，可以：
+
+- 通过扩展基础 Attribute 创建自定义 UUID 属性
+- 重写事件监听器服务实现自定义生成逻辑
+- 在 Symfony 配置中设置日志级别
+
 ## 进阶用法
 
 你可以通过扩展 Attribute 或事件监听器自定义 UUID 生成逻辑。
 
+## 安全考虑
+
+- UUID v1 包含 MAC 地址和时间戳信息，可能被视为敏感数据
+- UUID v4 采用加密随机生成，不包含可识别信息
+- 请根据安全要求选择合适的 UUID 版本
+- 对于面向公众的标识符，建议使用 UUID v4
+
 ## 常见问题
 
-1. **未生成 UUID**：请确保实体属性加了正确的 Attribute，且 bundle 已在 `config/bundles.php` 注册。
-2. **数据库 schema 问题**：请运行 `php bin/console doctrine:schema:update --force` 更新数据库结构。
+1. **未生成 UUID**：请确保实体属性加了正确的 Attribute，且 bundle 已在 `config/bundles.php`
+   注册。
+2. **数据库 schema 问题**：请运行 `php bin/console doctrine:schema:update --force`
+   更新数据库结构。
 3. **性能建议**：UUID v1 基于时间，适合用于数据库索引，UUID v4 随机性更强。
 
 ## 文档说明

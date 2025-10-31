@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\DoctrineUuidBundle\EventSubscriber;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
@@ -7,6 +9,7 @@ use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -15,12 +18,13 @@ use Tourze\DoctrineEntityCheckerBundle\Checker\EntityCheckerInterface;
 use Tourze\DoctrineUuidBundle\Attribute\UuidV1Column;
 use Tourze\DoctrineUuidBundle\Attribute\UuidV4Column;
 
+#[WithMonologChannel(channel: 'doctrine_uuid')]
 #[AsDoctrineListener(event: Events::prePersist)]
-class UuidListener implements EntityCheckerInterface
+readonly class UuidListener implements EntityCheckerInterface
 {
     public function __construct(
-        #[Autowire(service: 'doctrine-uuid.property-accessor')] private readonly PropertyAccessor $propertyAccessor,
-        private readonly ?LoggerInterface $logger = null,
+        #[Autowire(service: 'doctrine-uuid.property-accessor')] private PropertyAccessor $propertyAccessor,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -38,48 +42,36 @@ class UuidListener implements EntityCheckerInterface
                 continue;
             }
 
-            if (!empty($property->getAttributes(UuidV1Column::class))) {
-                try {
-                    // 已经有值了，我们就跳过
-                    $v = $property->getValue($entity);
-                    if (!empty($v)) {
-                        continue;
-                    }
-                } catch (\Throwable $exception) {
-                    // 忽略
-                }
-
-                $idValue = Uuid::v1()->toRfc4122();
-                $idValue = trim($idValue);
-
-                $this->logger?->debug("为{$property->getName()}分配UUID v1 ID", [
-                    'id' => $idValue,
-                    'entity' => $entity,
-                ]);
-                $this->propertyAccessor->setValue($entity, $property->getName(), $idValue);
+            if ([] !== $property->getAttributes(UuidV1Column::class)) {
+                $this->processUuidProperty($entity, $property, 'v1');
             }
 
-            if (!empty($property->getAttributes(UuidV4Column::class))) {
-                try {
-                    // 已经有值了，我们就跳过
-                    $v = $property->getValue($entity);
-                    if (!empty($v)) {
-                        continue;
-                    }
-                } catch (\Throwable $exception) {
-                    // 忽略
-                }
-
-                $idValue = Uuid::v4()->toRfc4122();
-                $idValue = trim($idValue);
-
-                $this->logger?->debug("为{$property->getName()}分配UUID v4 ID", [
-                    'id' => $idValue,
-                    'entity' => $entity,
-                ]);
-                $this->propertyAccessor->setValue($entity, $property->getName(), $idValue);
+            if ([] !== $property->getAttributes(UuidV4Column::class)) {
+                $this->processUuidProperty($entity, $property, 'v4');
             }
         }
+    }
+
+    private function processUuidProperty(object $entity, \ReflectionProperty $property, string $version): void
+    {
+        try {
+            // 已经有值了，我们就跳过
+            $v = $property->getValue($entity);
+            if (null !== $v && '' !== $v && [] !== $v) {
+                return;
+            }
+        } catch (\Throwable $exception) {
+            // 忽略
+        }
+
+        $idValue = 'v1' === $version ? Uuid::v1()->toRfc4122() : Uuid::v4()->toRfc4122();
+        $idValue = trim($idValue);
+
+        $this->logger->debug("为{$property->getName()}分配UUID {$version} ID", [
+            'id' => $idValue,
+            'entity' => $entity,
+        ]);
+        $this->propertyAccessor->setValue($entity, $property->getName(), $idValue);
     }
 
     public function preUpdateEntity(ObjectManager $objectManager, object $entity, PreUpdateEventArgs $eventArgs): void

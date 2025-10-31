@@ -1,12 +1,33 @@
 # Doctrine UUID Bundle
 
 [English](README.md) | [中文](README.zh-CN.md)
-[![Latest Version](https://img.shields.io/packagist/v/tourze/doctrine-uuid-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/doctrine-uuid-bundle)
-[![Build Status](https://img.shields.io/travis/tourze/doctrine-uuid-bundle/master.svg?style=flat-square)](https://travis-ci.org/tourze/doctrine-uuid-bundle)
-[![Quality Score](https://img.shields.io/scrutinizer/g/tourze/doctrine-uuid-bundle.svg?style=flat-square)](https://scrutinizer-ci.com/g/tourze/doctrine-uuid-bundle)
-[![Total Downloads](https://img.shields.io/packagist/dt/tourze/doctrine-uuid-bundle.svg?style=flat-square)](https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![Latest Version](https://img.shields.io/packagist/v/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![PHP Version](https://img.shields.io/packagist/php-v/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![License](https://img.shields.io/packagist/l/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![Build Status](https://img.shields.io/travis/tourze/doctrine-uuid-bundle/master.svg?style=flat-square)]
+(https://travis-ci.org/tourze/doctrine-uuid-bundle)
+[![Quality Score](https://img.shields.io/scrutinizer/g/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://scrutinizer-ci.com/g/tourze/doctrine-uuid-bundle)
+[![Total Downloads](https://img.shields.io/packagist/dt/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://packagist.org/packages/tourze/doctrine-uuid-bundle)
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/tourze/doctrine-uuid-bundle.svg?style=flat-square)]
+(https://scrutinizer-ci.com/g/tourze/doctrine-uuid-bundle)
 
 A Symfony bundle for automatic UUID (v1/v4) assignment in Doctrine entities using PHP 8 attributes.
+
+## Installation
+
+```bash
+composer require tourze/doctrine-uuid-bundle
+```
+
+## Requirements
+
+- PHP 8.1 or higher
+- Symfony 6.4 or higher
 
 ## Features
 
@@ -19,17 +40,6 @@ A Symfony bundle for automatic UUID (v1/v4) assignment in Doctrine entities usin
 - Nullable UUID fields supported
 - Automatic database schema updates
 - Compatible with Symfony 6.4+ and Doctrine 2.13+
-
-## Requirements
-
-- PHP 8.1 or higher
-- Symfony 6.4 or higher
-
-## Installation
-
-```bash
-composer require tourze/doctrine-uuid-bundle
-```
 
 ## Quick Start
 
@@ -56,20 +66,39 @@ class YourEntity
 
 UUIDs will be automatically generated when the entity is persisted.
 
+## Configuration
+
+The bundle works with zero configuration. If you need to customize the behavior, you can:
+
+- Create custom UUID attributes by extending the base attributes
+- Override the event listener service to implement custom generation logic
+- Configure logging levels in your Symfony configuration
+
 ## Advanced Usage
 
 You may extend the Attribute or event listener to implement custom UUID generation logic.
 
+## Security
+
+- UUID v1 contains MAC address and timestamp information, which may be considered sensitive
+- UUID v4 is cryptographically random and doesn't contain identifiable information
+- Choose the appropriate UUID version based on your security requirements
+- Consider using UUID v4 for public-facing identifiers
+
 ## Common Issues
 
-1. **UUID not being generated**: Ensure your entity uses the correct attributes and the bundle is registered in `config/bundles.php`.
-2. **Database schema issues**: Run `php bin/console doctrine:schema:update --force` to update your database schema.
-3. **Performance considerations**: UUID v1 is time-based and may be more suitable for database indexing than UUID v4.
+1. **UUID not being generated**: Ensure your entity uses the correct attributes and the bundle is registered
+   in `config/bundles.php`.
+2. **Database schema issues**: Run `php bin/console doctrine:schema:update --force` to update your
+   database schema.
+3. **Performance considerations**: UUID v1 is time-based and may be more suitable for database
+   indexing than UUID v4.
 
 ## Documentation
 
 - [API Docs](docs/)
-- Most configuration is automatic. For advanced extension, you may customize the event subscriber.
+- Most configuration is automatic. For advanced extension, you may customize the event
+  subscriber.
 
 ## Contributing
 
@@ -92,11 +121,3 @@ See [CHANGELOG](CHANGELOG.md)
 ### Workflow Diagram
 
 See `Mermaid.md` for a visual workflow.
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

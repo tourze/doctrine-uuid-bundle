@@ -1,12 +1,19 @@
 <?php
 
-namespace Tourze\DoctrineUuidBundle\Tests\Unit\Attribute;
+declare(strict_types=1);
 
+namespace Tourze\DoctrineUuidBundle\Tests\Attribute;
+
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\DoctrineUuidBundle\Attribute\UuidV1Column;
 use Tourze\DoctrineUuidBundle\Attribute\UuidV4Column;
 
-class UuidColumnAttributeTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(UuidV1Column::class)]
+final class UuidColumnAttributeTest extends TestCase
 {
     public function testUuidV1ColumnAttribute(): void
     {
@@ -29,6 +36,7 @@ class UuidColumnAttributeTest extends TestCase
         $this->assertEquals(\Attribute::class, $attributes[0]->getName());
 
         $attributeInstance = $attributes[0]->newInstance();
+        $this->assertInstanceOf(\Attribute::class, $attributeInstance);
         $this->assertEquals(\Attribute::TARGET_PROPERTY, $attributeInstance->flags);
     }
 
@@ -41,6 +49,7 @@ class UuidColumnAttributeTest extends TestCase
         $this->assertEquals(\Attribute::class, $attributes[0]->getName());
 
         $attributeInstance = $attributes[0]->newInstance();
+        $this->assertInstanceOf(\Attribute::class, $attributeInstance);
         $this->assertEquals(\Attribute::TARGET_PROPERTY, $attributeInstance->flags);
     }
 }

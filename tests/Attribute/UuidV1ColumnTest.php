@@ -1,11 +1,18 @@
 <?php
 
-namespace Tourze\DoctrineUuidBundle\Tests\Unit\Attribute;
+declare(strict_types=1);
 
+namespace Tourze\DoctrineUuidBundle\Tests\Attribute;
+
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\DoctrineUuidBundle\Attribute\UuidV1Column;
 
-class UuidV1ColumnTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(UuidV1Column::class)]
+final class UuidV1ColumnTest extends TestCase
 {
     public function testAttributeCanBeInstantiated(): void
     {
@@ -17,7 +24,7 @@ class UuidV1ColumnTest extends TestCase
     {
         $reflection = new \ReflectionClass(UuidV1Column::class);
         $attributes = $reflection->getAttributes(\Attribute::class);
-        
+
         $this->assertNotEmpty($attributes);
         $attributeInstance = $attributes[0]->newInstance();
         $this->assertEquals(\Attribute::TARGET_PROPERTY, $attributeInstance->flags);
